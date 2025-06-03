@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\VehicleTechnicalDetailRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: VehicleTechnicalDetailRepository::class)]
 class VehicleTechnicalDetail
@@ -11,28 +12,35 @@ class VehicleTechnicalDetail
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['vehicle:read', 'vehicleTechDetail:read'])]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'vehicleTech', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'vehicleTech', cascade: ['persist', 'remove'], targetEntity: Vehicle::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Vehicle $vehicle = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['vehicleTechDetail:read'])]
     private ?float $topSpeed = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['vehicleTechDetail:read'])]
     private ?float $length = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['vehicleTechDetail:read'])]
     private ?float $width = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['vehicleTechDetail:read'])]
     private ?float $height = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['vehicleTechDetail:read'])]
     private ?string $engineType = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Groups(['vehicleTechDetail:read'])]
     private ?string $fuelType = null;
 
     public function getId(): ?int

@@ -9,7 +9,7 @@ class VehicleControllerTest extends WebTestCase
     public function testMakersByType()
     {
         $client = static::createClient();
-        $client->request('GET', '/api/makers/by-type/suv', [], [], []);
+        $client->request('GET', '/api/vehicle/1', [], [], []);
         $this->assertResponseIsSuccessful();
         $this->assertJson($client->getResponse()->getContent());
     }

@@ -12,11 +12,11 @@ class Vehicle
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['vehicle:read', 'maker:read'])]
+    #[Groups(['vehicle:read', 'maker:read', 'vehicleTechDetail:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 125)]
-    #[Groups(['vehicle:read', 'maker:read'])]
+    #[Groups(['vehicle:read', 'maker:read', 'vehicleTechDetail:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -26,7 +26,8 @@ class Vehicle
     #[Groups(['vehicle:read'])]
     private ?Maker $maker = null;
 
-    #[ORM\OneToOne(mappedBy: 'vehicle', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'vehicle', cascade: ['persist', 'remove'], targetEntity: VehicleTechnicalDetail::class)]
+    #[Groups(['vehicle:read', 'vehicleTechDetail:read'])]
     private ?VehicleTechnicalDetail $vehicleTech = null;
 
     public function getId(): ?int
