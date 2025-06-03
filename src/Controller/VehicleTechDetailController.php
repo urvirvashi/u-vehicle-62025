@@ -23,13 +23,13 @@ final class VehicleTechDetailController extends AbstractController
         int $id
     ): JsonResponse {
         $vehicle = $em->getRepository(Vehicle::class)->find($id);
-    if (!$vehicle || !$vehicle->getTechnicalDetail()) {
+    if (!$vehicle || !$vehicle->getVehicleTech()) {
         return $this->json(['error' => 'Vehicle or details not found'], 404);
     }
-    $details = $vehicle->getTechnicalDetail();
+    $details = $vehicle->getVehicleTech();
     $data = json_decode($request->getContent(), true);
 
-    $errors = $updateService->patch($details, $data);
+    $errors = $updateService->update($details, $data);
     if ($errors) {
         return $this->json($errors, 400);
     }

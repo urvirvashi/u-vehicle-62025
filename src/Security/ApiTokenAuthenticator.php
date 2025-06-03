@@ -10,9 +10,17 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use App\Repository\UserRepository;
 
 class ApiTokenAuthenticator extends AbstractAuthenticator
 {
+    private UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     public function supports(Request $request): ?bool
     {
         return $request->headers->has('X-AUTH-TOKEN');
@@ -21,14 +29,15 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
     public function authenticate(Request $request): SelfValidatingPassport
     {
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
+        $user = $this->userRepository->findOneBy(['apiToken' => $apiToken]);
+
         if (!$apiToken) {
             throw new AuthenticationException('No API token provided');
         }
 
-        return new SelfValidatingPassport(new UserBadge($apiToken, function($token) use ($request) {
-            // The UserProvider will use apiToken as "username"
-            return null; // Let Symfony handle user loading via provider
-        }));
+        return new SelfValidatingPassport(new UserBadge($apiToken, function($token) {
+        return $this->userRepository->findOneBy(['apiToken' => $token]);
+            }));
     }
 
     public function onAuthenticationSuccess(Request $request, $token, string $firewallName): ?Response

@@ -1,16 +1,3 @@
-security:
-    providers:
-        api_token_provider:
-            entity:
-                class: App\Entity\User
-                property: apiToken
-
-    firewalls:
-        api:
-            pattern: ^/api
-            stateless: true
-            custom_authenticators:
-                - App\Security\ApiTokenAuthenticator
-
-    access_control:
-        - { path: ^/api, roles: ROLE_USER }
+_security_logout:
+    resource: security.route_loader.logout
+    type: service
