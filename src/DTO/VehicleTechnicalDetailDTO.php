@@ -4,22 +4,19 @@ namespace App\DTO;
 
 class VehicleTechnicalDetailDTO
 {
-    public float $topSpeed;
-    public float $length;
-    public float $width;
-    public float $height;
-    public string $engineType;
-    public string $fuelType;
+    public ?int $topSpeed = null;
+    public ?int $length = null;
+    public ?int $width = null;
+    public ?int $height = null;
+    public ?string $engineType = null;
+    public ?string $fuelType = null;
+    public ?int $engineCapacity = null;
+    public ?string $driveSystem = null;
+    public ?int $weight = null;
+    public ?int $wheelBase = null;
 
-    public function __construct(
-        float $topSpeed, float $length, float $width, float $height,
-        string $engineType, string $fuelType
-    ) {
-        $this->topSpeed = $topSpeed;
-        $this->length = $length;
-        $this->width = $width;
-        $this->height = $height;
-        $this->engineType = $engineType;
-        $this->fuelType = $fuelType;
+    public function toArray(): array
+    {
+        return get_object_vars($this);
     }
 }

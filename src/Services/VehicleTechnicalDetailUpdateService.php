@@ -6,6 +6,7 @@ use App\Entity\VehicleTechnicalDetail;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\EntityManagerInterface;
+use App\DTO\VehicleTechnicalDetailDTO;
 
 class VehicleTechnicalDetailUpdateService
 {
@@ -14,44 +15,34 @@ class VehicleTechnicalDetailUpdateService
         'fuelType', 'engineCapacity', 'driveSystem', 'weight', 'wheelBase'
     ];
 
+    private const REQUESTED_PARAMETER_LIMIT = 3;
+
     public function __construct(
+        private EntityUpdateService $entityUpdateService,
         private ValidatorInterface $validator
-    ) {}
+    ) {
 
-    public function update(VehicleTechnicalDetail $detail, array $data): array
+    }
+
+    public function update(
+        VehicleTechnicalDetail $detail, 
+        VehicleTechnicalDetailDTO $data,
+        int $requestCount
+    ): array
     {
-       // Only keep keys that are technical parameters
-        $fieldsToUpdate = array_intersect(array_keys($data), self::TECHNICAL_FIELDS);
+        $data = get_object_vars($data);
+        $errors = $this->entityUpdateService->updateEntity(
+            $detail, 
+            $data, 
+            self::TECHNICAL_FIELDS
+        );
 
-        // Enforce the limit: no more than 10 fields
-        if (count($fieldsToUpdate) > 10) {
-            return ['error' => 'You can only update up to 10 technical parameters at once.'];
+        if ($requestCount > self::REQUESTED_PARAMETER_LIMIT) {
+            return ['error' => 'You can only update up to ' . self::REQUESTED_PARAMETER_LIMIT . ' fields at once.'];
         }
-
-        // Optionally, reject if any field is not allowed
-        $extraFields = array_diff(array_keys($data), self::TECHNICAL_FIELDS);
-        if ($extraFields) {
-            return ['error' => 'Invalid fields: ' . implode(', ', $extraFields)];
+        if (!empty($errors)) {
+            return $errors;
         }
-
-        // Set the values
-        foreach ($fieldsToUpdate as $field) {
-            $setter = 'set' . ucfirst($field);
-            if (method_exists($detail, $setter)) {
-                $detail->$setter($data[$field]);
-            }
-        }
-
-        // Validate
-        $errors = $this->validator->validate($detail);
-        if (count($errors) > 0) {
-            $errorMessages = [];
-            foreach ($errors as $error) {
-                $errorMessages[$error->getPropertyPath()][] = $error->getMessage();
-            }
-            return $errorMessages;
-        }
-
-        return [];
+         return [];
     }
 }

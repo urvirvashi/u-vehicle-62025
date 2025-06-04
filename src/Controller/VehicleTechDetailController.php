@@ -11,30 +11,51 @@ use App\DTO\VehicleTechnicalDetailDTO;
 use App\Services\VehicleTechnicalDetailUpdateService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Vehicle;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[Route('/api')]
 final class VehicleTechDetailController extends AbstractController
 {
    #[Route('/vehicle-tech-detail/{id}', name: 'api_vehicle_tech_detail_update', methods: ['PATCH'])]
-    public function updateTechnical(
+    public function updateVehicleTechnicalData(
+        int $id,
         Request $request,
         EntityManagerInterface $em,
         VehicleTechnicalDetailUpdateService $updateService,
-        int $id
+        SerializerInterface $serializer
     ): JsonResponse {
-        $vehicle = $em->getRepository(Vehicle::class)->find($id);
-    if (!$vehicle || !$vehicle->getVehicleTech()) {
-        return $this->json(['error' => 'Vehicle or details not found'], 404);
-    }
-    $details = $vehicle->getVehicleTech();
-    $data = json_decode($request->getContent(), true);
+        try {
+            $vehicle = $em->getRepository(Vehicle::class)->find($id);
 
-    $errors = $updateService->update($details, $data);
-    if ($errors) {
-        return $this->json($errors, 400);
-    }
+            if (!$vehicle || !$vehicle->getVehicleTech()) {
+                throw new NotFoundHttpException('Vehicle or technical details not found');
+            }
 
-    $em->flush();
-    return $this->json(['message' => 'Technical details updated']);
+            $data = $request->getContent();
+            if (empty($data)) {
+                throw new BadRequestHttpException('Empty request body');
+            }
+
+            try {
+                /** @var VehicleTechnicalDetailDTO $dto */
+                $dto = $serializer->deserialize($data, VehicleTechnicalDetailDTO::class, 'json');
+            } catch (\Exception $e) {
+                throw new BadRequestHttpException('Invalid data: ' . $e->getMessage());
+            }
+
+            $errors = $updateService->update($vehicle->getVehicleTech(), $dto, count(json_decode($data, true)));
+            if (!empty($errors)) {
+                return $this->json($errors, 400);
+            }
+
+            $em->flush();
+            return $this->json(['message' => 'Technical details updated']);
+        } catch (NotFoundHttpException | BadRequestHttpException $e) {
+            return $this->json(['error' => $e->getMessage()], $e->getStatusCode());
+        } catch (\Exception $e) {
+            return $this->json(['error' => 'Internal Server Error'], 500);
+        }
     }
 }
