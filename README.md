@@ -33,8 +33,5 @@ Completeness: Did you complete the features?
 Correctness: Does the functionality act in sensible, thought-out ways?
 Maintainability: Is it written in a clean, maintainable way?
 Testing: Is the system adequately tested?
-Delivery
-Please provide a link to a git/bitbucket repository which contains the application code.
 
-Contact
-If you encounter any issues or have any questions you can contact: - Mihai: mihai.craciun@iqeq.com - Marian: marian.dobre@iqeq.com
+
