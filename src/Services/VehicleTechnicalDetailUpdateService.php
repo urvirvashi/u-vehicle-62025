@@ -15,25 +15,25 @@ class VehicleTechnicalDetailUpdateService
         'fuelType', 'engineCapacity', 'driveSystem', 'weight', 'wheelBase'
     ];
 
-    private const REQUESTED_PARAMETER_LIMIT = 3;
+    private const REQUESTED_PARAMETER_LIMIT = 10;
 
     public function __construct(
-        private EntityUpdateService $entityUpdateService,
-        private ValidatorInterface $validator
+        private EntityUpdateService $entityUpdateService
     ) {
-
     }
 
+    /**
+     * @return array{error: string}|array<string, string>
+     */
     public function update(
-        VehicleTechnicalDetail $detail, 
+        VehicleTechnicalDetail $detail,
         VehicleTechnicalDetailDTO $data,
         int $requestCount
-    ): array
-    {
+    ): array {
         $data = get_object_vars($data);
         $errors = $this->entityUpdateService->updateEntity(
-            $detail, 
-            $data, 
+            $detail,
+            $data,
             self::TECHNICAL_FIELDS
         );
 

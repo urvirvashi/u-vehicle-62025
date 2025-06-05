@@ -41,6 +41,9 @@ class MakerRepository extends ServiceEntityRepository
     //        ;
     //    }
 
+    /**
+     * @return Maker[]
+     */
     public function findMakersByType(string $type): array
     {
         return $this->createQueryBuilder('m')

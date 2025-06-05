@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Security;
 
@@ -11,6 +11,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use App\Repository\UserRepository;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ApiTokenAuthenticator extends AbstractAuthenticator
 {
@@ -35,12 +36,12 @@ class ApiTokenAuthenticator extends AbstractAuthenticator
             throw new AuthenticationException('No API token provided');
         }
 
-        return new SelfValidatingPassport(new UserBadge($apiToken, function($token) {
-        return $this->userRepository->findOneBy(['apiToken' => $token]);
-            }));
+        return new SelfValidatingPassport(new UserBadge($apiToken, function ($token) {
+                return $this->userRepository->findOneBy(['apiToken' => $token]);
+        }));
     }
 
-    public function onAuthenticationSuccess(Request $request, $token, string $firewallName): ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         return null; // continue
     }

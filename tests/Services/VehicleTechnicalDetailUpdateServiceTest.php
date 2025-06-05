@@ -45,15 +45,15 @@ class VehicleTechnicalDetailUpdateServiceTest extends TestCase
 
     public function testExceedsFieldLimit(): void
     {
-        $dto = new VehicleTechnicalDetailDTO(120.0, 4.5, 2.0, 1.5, 'V6', 'Petrol');
+        $dto = new VehicleTechnicalDetailDTO(120.0, 4.5, 2.0, 1.5, 'V6', 'Petrol', 2.0, 1.5, 'V6', 'Petrol');
         $entity = $this->createMock(VehicleTechnicalDetail::class);
 
-        // Exceeds the limit of 3 fields
-        $errors = $this->service->update($entity, $dto, 6);
+        // Exceeds the limit of 10 ields
+        $errors = $this->service->update($entity, $dto, 11);
 
         $this->assertArrayHasKey('error', $errors);
         $this->assertEquals(
-            'You can only update up to 3 fields at once.',
+            'You can only update up to 10 fields at once.',
             $errors['error']
         );
     }

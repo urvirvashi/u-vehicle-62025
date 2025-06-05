@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\DTO;
 
@@ -15,6 +15,9 @@ class VehicleTechnicalDetailDTO
     public ?int $weight = null;
     public ?int $wheelBase = null;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return get_object_vars($this);

@@ -13,12 +13,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Vehicle;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Exception\VehicleNotFoundException;
 
 #[Route('/api')]
 final class VehicleTechDetailController extends AbstractController
 {
-   #[Route('/vehicle-tech-detail/{id}', name: 'api_vehicle_tech_detail_update', methods: ['PATCH'])]
+    #[Route('/vehicle-tech-detail/{id}', name: 'api_vehicle_tech_detail_update', methods: ['PATCH'])]
     public function updateVehicleTechnicalData(
         int $id,
         Request $request,
@@ -30,7 +30,7 @@ final class VehicleTechDetailController extends AbstractController
             $vehicle = $em->getRepository(Vehicle::class)->find($id);
 
             if (!$vehicle || !$vehicle->getVehicleTech()) {
-                throw new NotFoundHttpException('Vehicle or technical details not found');
+                throw new VehicleNotFoundException('Vehicle or technical details not found');
             }
 
             $data = $request->getContent();
@@ -52,7 +52,7 @@ final class VehicleTechDetailController extends AbstractController
 
             $em->flush();
             return $this->json(['message' => 'Technical details updated']);
-        } catch (NotFoundHttpException | BadRequestHttpException $e) {
+        } catch (VehicleNotFoundException | BadRequestHttpException $e) {
             return $this->json(['error' => $e->getMessage()], $e->getStatusCode());
         } catch (\Exception $e) {
             return $this->json(['error' => 'Internal Server Error'], 500);

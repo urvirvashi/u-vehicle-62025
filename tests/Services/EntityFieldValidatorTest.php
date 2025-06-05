@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class EntityFieldValidatorTest extends TestCase
 {
-     private EntityFieldValidator $validator;
+    private EntityFieldValidator $validator;
 
     protected function setUp(): void
     {

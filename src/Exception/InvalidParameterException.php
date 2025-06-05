@@ -2,7 +2,6 @@
 
 namespace App\Exception;
 
-class InvalidParameterException extends \Exception 
+class InvalidParameterException extends \Exception
 {
-    
 }

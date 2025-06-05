@@ -10,15 +10,20 @@ class EntityUpdateService
         private ValidatorInterface $validator,
         private EntityFieldValidator $fieldValidator,
         private EntityFieldSetter $fieldSetter
-    ) {}
+    ) {
+    }
 
+    /**
+     * @param array<string, mixed> $data
+     * @param string[] $allowedFields
+     * @return array{error: string}|array<string, string[]>
+     */
     public function updateEntity(
         object $entity,
         array $data,
-        array $allowedFields,
-        int $limit = 10
+        array $allowedFields
     ): array {
-        $validation = $this->fieldValidator->validate($data, $allowedFields, $limit);
+        $validation = $this->fieldValidator->validate($data, $allowedFields);
 
         if (isset($validation['error'])) {
             return ['error' => $validation['error']];

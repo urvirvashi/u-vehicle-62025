@@ -25,10 +25,10 @@ class AppFixtures extends Fixture
         $details = new VehicleTechnicalDetail();
         $details->setVehicle($vehicle)
             ->setTopSpeed(180)
-            ->setLength(4.6)
-            ->setWidth(1.8)
-            ->setHeight(1.7)
-            ->setEngineType('petrol')
+            ->setLength(7.6)
+            ->setWidth(7.8)
+            ->setHeight(7.7)
+            ->setEngineType('hybrid')
             ->setFuelType('petrol');
         $manager->persist($details);
 

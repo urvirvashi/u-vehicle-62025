@@ -27,7 +27,7 @@ class UserFixture extends Fixture
         $manager->persist($user);
 
         $manager->flush();
-        
+
         echo "Test User API Token: " . $user->getApiToken() . "\n";
     }
 }
